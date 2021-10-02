@@ -1,0 +1,47 @@
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[project]
+name = "blacksheep-jwt"
+version = {use_scm = true}
+description = "A JSON Web Token library for the BlackSheep web framework"
+authors = [
+    {name = "q0w", email = "43147888+q0w@users.noreply.github.com"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "attrs>=20",
+    "blacksheep>=1.0.9",
+    "pyjwt>=2, <3",
+]
+dynamic = ["version", "classifiers"]
+
+classifiers = [
+    "Environment :: Web Environment",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
+
+[project.urls]
+Repository = "https://github.com/q0w/blacksheep-jwt/"
+Homepage = "https://github.com/q0w/blacksheep-jwt/"
+
+[project.optional-dependencies]
+orjson = [
+    "orjson~=3.6",
+]
+
+[tool.pdm]
+package-dir = "src"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest~=6.2",
+    "twine~=3.4",
+]

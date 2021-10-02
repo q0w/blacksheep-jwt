@@ -1,0 +1,6 @@
+{
+    "jwt": {
+        "signing_key": "secret",
+        "access_token_lifetime": "0:0:20"
+    }
+}

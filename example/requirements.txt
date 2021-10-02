@@ -1,0 +1,4 @@
+blacksheep>=1.0.9
+blacksheep-jwt
+essentials-configuration
+uvicorn
