@@ -1,5 +1,6 @@
+from __future__ import annotations
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Dict, Any
 from typing import Union
 
 import attr
@@ -8,7 +9,7 @@ from attr.validators import instance_of
 from attr.validators import optional
 from blacksheep_jwt.errors import TokenBackendError
 from blacksheep_jwt.settings import JwtSettings
-from jwt import algorithms
+from jwt import algorithms, PyJWKClient
 from jwt import InvalidAlgorithmError
 from jwt import InvalidTokenError
 
@@ -47,16 +48,16 @@ class TokenBackend:
         default=None,
         validator=optional(instance_of(str)),
     )
-    jwks_client: Optional[jwt.PyJWKClient] = attr.ib()
+    jwks_client: Optional[PyJWKClient] = attr.ib()
     leeway: Union[float, timedelta] = attr.ib(
         default=0.0,
         validator=instance_of((float, timedelta)),
     )
 
     @jwks_client.default
-    def check_jwk_url(self):
+    def check_jwk_url(self) -> Optional[PyJWKClient]:
         if self.jwk_url:
-            return jwt.PyJWKClient(self.jwk_url)
+            return PyJWKClient(self.jwk_url)
         else:
             return None
 
@@ -65,7 +66,7 @@ class TokenBackend:
             self.verifying_key = self.signing_key
 
     @algorithm.validator
-    def _validate_algorithm(self, attribute, value):
+    def _validate_algorithm(self, attribute, value) -> None:
         if value not in ALLOWED_ALGORITHMS:
             raise TokenBackendError(
                 f"Unrecognized algorithm type '{value}'.",
@@ -79,7 +80,7 @@ class TokenBackend:
                 f'You must have cryptography installed to use {value}.',
             )
 
-    def get_verifying_key(self, token):
+    def get_verifying_key(self, token) -> Optional[str]:
         if self.algorithm.startswith('HS'):
             return self.signing_key
 
@@ -88,7 +89,7 @@ class TokenBackend:
 
         return self.verifying_key
 
-    def encode(self, payload):
+    def encode(self, payload) -> str:
         jwt_payload = payload.copy()
         if self.audience is not None:
             jwt_payload['aud'] = self.audience
@@ -102,7 +103,7 @@ class TokenBackend:
         )
         return token
 
-    def decode(self, token, verify=True):
+    def decode(self, token, verify=True) -> Dict[str, Any]:
         try:
             return jwt.decode(
                 token,
@@ -123,7 +124,7 @@ class TokenBackend:
             raise TokenBackendError('Token is invalid or expired')
 
     @classmethod
-    def from_configuration(cls, settings: JwtSettings):
+    def from_configuration(cls, settings: JwtSettings) -> TokenBackend:
         return cls(
             algorithm=settings.algorithm,
             signing_key=settings.signing_key,

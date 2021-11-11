@@ -61,7 +61,7 @@ class Token:
             self.set_exp(from_time=self.current_time, lifetime=self.lifetime)
             self.set_jti()
 
-    def verify(self):
+    def verify(self) -> None:
         self.check_exp()
 
         if self.settings.jti_claim not in self.payload:
@@ -69,7 +69,7 @@ class Token:
 
         self.verify_token_type()
 
-    def verify_token_type(self):
+    def verify_token_type(self) -> None:
         try:
             token_type = self.payload[self.settings.token_type_claim]
         except KeyError:
@@ -77,7 +77,7 @@ class Token:
         if self.token_type != token_type:
             raise TokenError('Token has wrong type')
 
-    def set_exp(self, claim='exp', from_time=None, lifetime=None):
+    def set_exp(self, claim='exp', from_time=None, lifetime=None) -> None:
         if not from_time:
             from_time = self.current_time
 
@@ -86,7 +86,7 @@ class Token:
 
         self.payload[claim] = datetime_to_epoch(from_time + lifetime)
 
-    def check_exp(self, claim='exp', current_time=None):
+    def check_exp(self, claim='exp', current_time=None) -> None:
         if not current_time:
             current_time = self.current_time
         try:
@@ -97,7 +97,7 @@ class Token:
         if claim_time <= current_time:
             raise TokenError(f"Token '{claim}' claim has expired")
 
-    def set_jti(self):
+    def set_jti(self) -> None:
         self.payload[self.settings.jti_claim] = uuid4().hex
 
     @classmethod
@@ -109,25 +109,25 @@ class Token:
         token[settings.user_id_claim] = user_id
         return token
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.payload)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> Any:
         return self.payload[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         self.payload[key] = value
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         del self.payload[key]
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         return key in self.payload
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.token_backend.encode(self.payload)
 
-    def get(self, key, default=None):
+    def get(self, key, default=None) -> Any:
         return self.payload.get(key, default)
 
 
