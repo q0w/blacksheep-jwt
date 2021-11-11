@@ -1,7 +1,10 @@
+from typing import Any
+from typing import Dict
+
 from blacksheep import Content
 from blacksheep import Request
 from blacksheep import Response
-from blacksheep.server import Application
+from blacksheep.server.application import Application
 from blacksheep_jwt.authentication import JwtAuthentication
 from blacksheep_jwt.errors import InvalidToken
 from blacksheep_jwt.settings import JwtSettings
@@ -16,7 +19,7 @@ except ImportError:
 
 def register_jwt(
     app: Application,
-    settings: dict,
+    settings: Dict[str, Any],
     add_exception_handlers: bool = False,
 ):
     jwt_settings = JwtSettings(**settings)

@@ -24,39 +24,32 @@ ALLOWED_ALGORITHMS = (
 
 @attr.s
 class TokenBackend:
-    signing_key = attr.ib(
-        type=str,
+    signing_key: str = attr.ib(
         validator=instance_of(str),
     )
-    verifying_key = attr.ib(
+    verifying_key: Optional[str] = attr.ib(
         default=None,
-        type=Optional[str],
         validator=optional(instance_of(str)),
     )
-    algorithm = attr.ib(
+    algorithm: str = attr.ib(
         default='HS256',
-        type=str,
         validator=instance_of(str),
     )
-    audience = attr.ib(
+    audience: Optional[str] = attr.ib(
         default=None,
-        type=Optional[str],
         validator=optional(instance_of(str)),
     )
-    issuer = attr.ib(
+    issuer: Optional[str] = attr.ib(
         default=None,
-        type=Optional[str],
         validator=optional(instance_of(str)),
     )
-    jwk_url = attr.ib(
+    jwk_url: Optional[str] = attr.ib(
         default=None,
-        type=Optional[str],
         validator=optional(instance_of(str)),
     )
-    jwks_client = attr.ib()
-    leeway = attr.ib(
+    jwks_client: Optional[jwt.PyJWKClient] = attr.ib()
+    leeway: Union[float, timedelta] = attr.ib(
         default=0.0,
-        type=Union[float, timedelta],
         validator=instance_of((float, timedelta)),
     )
 

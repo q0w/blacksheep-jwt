@@ -6,17 +6,17 @@ from importlib import import_module
 from typing import Union
 
 
-def str2timedelta(s: Union[str, timedelta]) -> timedelta:
+def to_timedelta(s: Union[str, timedelta]) -> timedelta:
     if not isinstance(s, str):
         return s
     t = datetime.strptime(s, '%H:%M:%S')
     return timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
 
 
-def str2bytes(s: Union[str, bytes]) -> bytes:
-    if isinstance(s, bytes):
-        return s
-    return str.encode(s)
+def to_bytes(data: Union[str, bytes]) -> bytes:
+    return (
+        bytes(data, encoding='utf-8') if not isinstance(data, bytes) else data
+    )
 
 
 def datetime_to_epoch(dt):
