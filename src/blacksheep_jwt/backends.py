@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from datetime import timedelta
-from typing import Optional, Dict, Any
+from typing import Any
+from typing import Dict
+from typing import Optional
 from typing import Union
 
 import attr
@@ -9,9 +12,10 @@ from attr.validators import instance_of
 from attr.validators import optional
 from blacksheep_jwt.errors import TokenBackendError
 from blacksheep_jwt.settings import JwtSettings
-from jwt import algorithms, PyJWKClient
+from jwt import algorithms
 from jwt import InvalidAlgorithmError
 from jwt import InvalidTokenError
+from jwt import PyJWKClient
 
 ALLOWED_ALGORITHMS = (
     'HS256',
