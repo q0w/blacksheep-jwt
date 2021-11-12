@@ -84,7 +84,7 @@ class TokenBackend:
                 f'You must have cryptography installed to use {value}.',
             )
 
-    def get_verifying_key(self, token) -> str:
+    def get_verifying_key(self, token: str) -> str:
         if self.algorithm.startswith('HS'):
             return self.signing_key
 
@@ -93,7 +93,7 @@ class TokenBackend:
 
         return self.verifying_key
 
-    def encode(self, payload) -> str:
+    def encode(self, payload: Dict[str, Any]) -> str:
         jwt_payload = payload.copy()
         if self.audience is not None:
             jwt_payload['aud'] = self.audience
@@ -107,7 +107,7 @@ class TokenBackend:
         )
         return token
 
-    def decode(self, token, verify=True) -> Dict[str, Any]:
+    def decode(self, token: str, verify=True) -> Dict[str, Any]:
         try:
             return jwt.decode(
                 token,

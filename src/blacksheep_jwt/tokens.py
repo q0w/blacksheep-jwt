@@ -112,22 +112,22 @@ class Token:
     def __repr__(self) -> str:
         return repr(self.payload)
 
-    def __getitem__(self, key) -> Any:
+    def __getitem__(self, key: str) -> Any:
         return self.payload[key]
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key: str, value: Any) -> None:
         self.payload[key] = value
 
-    def __delitem__(self, key) -> None:
+    def __delitem__(self, key: str) -> None:
         del self.payload[key]
 
-    def __contains__(self, key) -> bool:
+    def __contains__(self, key: str) -> bool:
         return key in self.payload
 
     def __str__(self) -> str:
         return self.token_backend.encode(self.payload)
 
-    def get(self, key, default=None) -> Any:
+    def get(self, key: str, default=None) -> Any:
         return self.payload.get(key, default)
 
 
