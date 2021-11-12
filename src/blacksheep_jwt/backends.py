@@ -8,8 +8,6 @@ from typing import Union
 
 import attr
 import jwt
-from attr.validators import instance_of
-from attr.validators import optional
 from blacksheep_jwt.errors import TokenBackendError
 from blacksheep_jwt.settings import JwtSettings
 from jwt import algorithms
@@ -29,34 +27,14 @@ ALLOWED_ALGORITHMS = (
 
 @attr.define
 class TokenBackend:
-    signing_key: str = attr.ib(
-        validator=instance_of(str),
-    )
-    verifying_key: str = attr.ib(
-        default='',
-        validator=instance_of(str),
-    )
-    algorithm: str = attr.ib(
-        default='HS256',
-        validator=instance_of(str),
-    )
-    audience: Optional[str] = attr.ib(
-        default=None,
-        validator=optional(instance_of(str)),
-    )
-    issuer: Optional[str] = attr.ib(
-        default=None,
-        validator=optional(instance_of(str)),
-    )
-    jwk_url: Optional[str] = attr.ib(
-        default=None,
-        validator=optional(instance_of(str)),
-    )
+    signing_key: str
+    verifying_key: str = ''
+    algorithm: str = attr.ib(default='HS256')
+    audience: Optional[str] = None
+    issuer: Optional[str] = None
+    jwk_url: Optional[str] = None
     jwks_client: Optional[PyJWKClient] = attr.ib()
-    leeway: Union[float, timedelta] = attr.ib(
-        default=0.0,
-        validator=instance_of((float, timedelta)),
-    )
+    leeway: Union[float, timedelta] = 0.0
 
     @jwks_client.default
     def check_jwk_url(self) -> Optional[PyJWKClient]:

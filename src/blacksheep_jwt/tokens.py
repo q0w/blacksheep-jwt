@@ -6,7 +6,6 @@ from typing import Optional
 from uuid import uuid4
 
 import attr
-from attr.validators import instance_of
 from blacksheep_jwt.backends import TokenBackend
 from blacksheep_jwt.errors import TokenBackendError
 from blacksheep_jwt.errors import TokenError
@@ -33,12 +32,11 @@ class Token:
         init=False,
         default=None,
         converter=to_timedelta,
-        validator=instance_of(timedelta),
     )
     token: Optional[str] = None
     payload: Dict[str, Any] = attr.ib(init=False)
     current_time: datetime = attr.ib(init=False)
-    is_verify: bool = attr.ib(default=True, validator=instance_of(bool))
+    is_verify: bool = True
 
     def __attrs_post_init__(self):
         if self.token_type is None or self.lifetime is None:
@@ -141,7 +139,6 @@ class AccessToken(Token):
             takes_self=True,
         ),
         converter=to_timedelta,
-        validator=instance_of(timedelta),
     )
 
 
@@ -155,7 +152,6 @@ class RefreshToken(Token):
             takes_self=True,
         ),
         converter=to_timedelta,
-        validator=instance_of(timedelta),
     )
 
     @property
