@@ -32,9 +32,9 @@ class TokenBackend:
     signing_key: str = attr.ib(
         validator=instance_of(str),
     )
-    verifying_key: Optional[str] = attr.ib(
-        default=None,
-        validator=optional(instance_of(str)),
+    verifying_key: str = attr.ib(
+        default='',
+        validator=instance_of(str),
     )
     algorithm: str = attr.ib(
         default='HS256',
@@ -84,7 +84,7 @@ class TokenBackend:
                 f'You must have cryptography installed to use {value}.',
             )
 
-    def get_verifying_key(self, token) -> Optional[str]:
+    def get_verifying_key(self, token) -> str:
         if self.algorithm.startswith('HS'):
             return self.signing_key
 

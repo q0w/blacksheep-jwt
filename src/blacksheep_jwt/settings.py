@@ -11,7 +11,7 @@ from blacksheep_jwt.utils import to_timedelta
 @attr.s(auto_attribs=True)
 class JwtSettings:
     signing_key: str
-    verifying_key: Optional[str] = None
+    verifying_key: str = ''
     algorithm: str = 'HS256'
     issuer: Optional[str] = None
     audience: Optional[str] = None
