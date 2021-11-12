@@ -27,7 +27,7 @@ ALLOWED_ALGORITHMS = (
 )
 
 
-@attr.s
+@attr.define
 class TokenBackend:
     signing_key: str = attr.ib(
         validator=instance_of(str),

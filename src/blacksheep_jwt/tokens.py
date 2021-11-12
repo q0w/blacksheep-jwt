@@ -16,7 +16,7 @@ from blacksheep_jwt.utils import datetime_to_epoch
 from blacksheep_jwt.utils import to_timedelta
 
 
-@attr.s(repr=False, str=False)
+@attr.define(repr=False, str=False)
 class Token:
     settings: JwtSettings = attr.ib()
     token_backend: TokenBackend = attr.ib(
@@ -36,8 +36,8 @@ class Token:
         validator=instance_of(timedelta),
     )
     token: Optional[str] = None
-    payload = attr.ib(init=False, type=Dict[str, Any])
-    current_time = attr.ib(init=False)
+    payload: Dict[str, Any] = attr.ib(init=False)
+    current_time: datetime = attr.ib(init=False)
     is_verify: bool = attr.ib(default=True, validator=instance_of(bool))
 
     def __attrs_post_init__(self):
@@ -131,7 +131,7 @@ class Token:
         return self.payload.get(key, default)
 
 
-@attr.s
+@attr.define
 class AccessToken(Token):
     token_type: str = 'access'
     lifetime: timedelta = attr.ib(
@@ -145,7 +145,7 @@ class AccessToken(Token):
     )
 
 
-@attr.s
+@attr.define
 class RefreshToken(Token):
     token_type: str = 'refresh'
     lifetime: timedelta = attr.ib(

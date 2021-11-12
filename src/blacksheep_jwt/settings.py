@@ -8,7 +8,7 @@ from blacksheep_jwt.utils import to_bytes
 from blacksheep_jwt.utils import to_timedelta
 
 
-@attr.s(auto_attribs=True)
+@attr.define
 class JwtSettings:
     signing_key: str
     verifying_key: str = ''
