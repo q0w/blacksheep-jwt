@@ -13,10 +13,13 @@ from guardpost.common import Policy
 
 try:
     import orjson
+
     dumps = orjson.dumps
 except ImportError:
     import json
-    def dumps(obj): return json.dumps(obj).encode('utf-8')  # type: ignore
+
+    def dumps(obj: Any) -> bytes:  # type: ignore
+        return json.dumps(obj).encode('utf-8')
 
 
 def register_jwt(
