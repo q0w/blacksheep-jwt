@@ -1,36 +1,42 @@
 from datetime import datetime
 from datetime import timedelta
 from typing import Any
+from typing import Dict
 from typing import Optional
 from uuid import uuid4
 
 import attr
-from attr.validators import instance_of
 from blacksheep_jwt.backends import TokenBackend
 from blacksheep_jwt.errors import TokenBackendError
 from blacksheep_jwt.errors import TokenError
 from blacksheep_jwt.settings import JwtSettings
 from blacksheep_jwt.utils import datetime_from_epoch
 from blacksheep_jwt.utils import datetime_to_epoch
-from blacksheep_jwt.utils import str2timedelta
+from blacksheep_jwt.utils import to_timedelta
 
 
-@attr.s(repr=False, str=False)
+@attr.define(repr=False, str=False)
 class Token:
-    settings = attr.ib(type=JwtSettings)
-    token_backend = attr.ib(init=False, default=None, type=TokenBackend)
-    token_type = attr.ib(default=None, type=Optional[str])
-    lifetime = attr.ib(
+    settings: JwtSettings = attr.ib()
+    token_backend: TokenBackend = attr.ib(
+        init=False,
+        default=attr.Factory(
+            lambda self: TokenBackend.from_configuration(
+                self.settings,
+            ),
+            takes_self=True,
+        ),
+    )
+    token_type: Optional[str] = None
+    lifetime: timedelta = attr.ib(
         init=False,
         default=None,
-        type=timedelta,
-        converter=str2timedelta,
-        validator=instance_of(timedelta),
+        converter=to_timedelta,
     )
-    token = attr.ib(default=None, type=Optional[str])
-    payload = attr.ib(init=False, type=dict[str, Any])
-    current_time = attr.ib(init=False)
-    is_verify = attr.ib(default=True, type=bool, validator=instance_of(bool))
+    token: Optional[str] = None
+    payload: Dict[str, Any] = attr.ib(init=False)
+    current_time: datetime = attr.ib(init=False)
+    is_verify: bool = True
 
     def __attrs_post_init__(self):
         if self.token_type is None or self.lifetime is None:
@@ -38,9 +44,8 @@ class Token:
 
         self.current_time = datetime.utcnow()
         if self.token is not None:
-            backend = self.get_token_backend()
             try:
-                self.payload = backend.decode(
+                self.payload = self.token_backend.decode(
                     self.token,
                     verify=self.is_verify,
                 )
@@ -54,7 +59,7 @@ class Token:
             self.set_exp(from_time=self.current_time, lifetime=self.lifetime)
             self.set_jti()
 
-    def verify(self):
+    def verify(self) -> None:
         self.check_exp()
 
         if self.settings.jti_claim not in self.payload:
@@ -62,7 +67,7 @@ class Token:
 
         self.verify_token_type()
 
-    def verify_token_type(self):
+    def verify_token_type(self) -> None:
         try:
             token_type = self.payload[self.settings.token_type_claim]
         except KeyError:
@@ -70,7 +75,7 @@ class Token:
         if self.token_type != token_type:
             raise TokenError('Token has wrong type')
 
-    def set_exp(self, claim='exp', from_time=None, lifetime=None):
+    def set_exp(self, claim='exp', from_time=None, lifetime=None) -> None:
         if not from_time:
             from_time = self.current_time
 
@@ -79,7 +84,7 @@ class Token:
 
         self.payload[claim] = datetime_to_epoch(from_time + lifetime)
 
-    def check_exp(self, claim='exp', current_time=None):
+    def check_exp(self, claim='exp', current_time=None) -> None:
         if not current_time:
             current_time = self.current_time
         try:
@@ -90,7 +95,7 @@ class Token:
         if claim_time <= current_time:
             raise TokenError(f"Token '{claim}' claim has expired")
 
-    def set_jti(self):
+    def set_jti(self) -> None:
         self.payload[self.settings.jti_claim] = uuid4().hex
 
     @classmethod
@@ -102,62 +107,51 @@ class Token:
         token[settings.user_id_claim] = user_id
         return token
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.payload)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self.payload[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         self.payload[key] = value
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         del self.payload[key]
 
-    def __contains__(self, key):
+    def __contains__(self, key: str) -> bool:
         return key in self.payload
 
-    def __str__(self):
-        return self.get_token_backend().encode(self.payload)
+    def __str__(self) -> str:
+        return self.token_backend.encode(self.payload)
 
-    def get(self, key, default=None):
+    def get(self, key: str, default=None) -> Any:
         return self.payload.get(key, default)
 
-    def get_token_backend(self):
-        if self.token_backend is None:
-            self.token_backend = TokenBackend.from_configuration(
-                self.settings,
-            )
-        return self.token_backend
 
-
-@attr.s
+@attr.define
 class AccessToken(Token):
-    token_type = attr.ib(default='access', type=str)
-    lifetime = attr.ib(
+    token_type: str = 'access'
+    lifetime: timedelta = attr.ib(
         init=False,
         default=attr.Factory(
             lambda self: self.settings.access_token_lifetime,
             takes_self=True,
         ),
-        type=timedelta,
-        converter=str2timedelta,
-        validator=instance_of(timedelta),
+        converter=to_timedelta,
     )
 
 
-@attr.s
+@attr.define
 class RefreshToken(Token):
-    token_type = attr.ib(default='refresh', type=str)
-    lifetime = attr.ib(
+    token_type: str = 'refresh'
+    lifetime: timedelta = attr.ib(
         init=False,
         default=attr.Factory(
             lambda self: self.settings.refresh_token_lifetime,
             takes_self=True,
         ),
-        type=timedelta,
-        converter=str2timedelta,
-        validator=instance_of(timedelta),
+        converter=to_timedelta,
     )
 
     @property

@@ -21,7 +21,7 @@ repos:
     rev: 3.9.2
     hooks:
     -   id: flake8
-        additional_dependencies: [flake8-typing-imports==1.10.1, flake8-tidy-imports]
+        additional_dependencies: [flake8-typing-imports, flake8-tidy-imports]
 -   repo: https://github.com/pre-commit/mirrors-autopep8
     rev: v1.5.7
     hooks:
@@ -30,14 +30,14 @@ repos:
     rev: v2.6.0
     hooks:
     -   id: reorder-python-imports
-        args: [--py3-plus]
+        args: [--py37-plus]
 -   repo: https://github.com/asottile/add-trailing-comma
     rev: v2.1.0
     hooks:
     -   id: add-trailing-comma
         args: [--py36-plus]
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.26.0
+    rev: v2.29.0
     hooks:
     -   id: pyupgrade
         args: [--py37-plus]
@@ -45,4 +45,4 @@ repos:
     rev: v0.910
     hooks:
     -   id: mypy
-        additional_dependencies: [types-attrs, types-orjson]
+        additional_dependencies: [attrs, types-orjson]

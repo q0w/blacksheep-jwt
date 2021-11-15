@@ -3,15 +3,14 @@ from typing import Optional
 from typing import Union
 
 import attr
-from attr.validators import instance_of
-from blacksheep_jwt.utils import str2bytes
-from blacksheep_jwt.utils import str2timedelta
+from blacksheep_jwt.utils import to_bytes
+from blacksheep_jwt.utils import to_timedelta
 
 
-@attr.s(auto_attribs=True)
+@attr.define
 class JwtSettings:
     signing_key: str
-    verifying_key: Optional[str] = None
+    verifying_key: str = ''
     algorithm: str = 'HS256'
     issuer: Optional[str] = None
     audience: Optional[str] = None
@@ -20,13 +19,11 @@ class JwtSettings:
 
     auth_header_type: bytes = attr.ib(
         default=b'Bearer',
-        converter=str2bytes,
-        validator=instance_of(bytes),
+        converter=to_bytes,
     )
     auth_header_name: bytes = attr.ib(
         default=b'Authorization',
-        converter=str2bytes,
-        validator=instance_of(bytes),
+        converter=to_bytes,
     )
     user_id_field: str = 'id'
     user_id_claim: str = 'user_id'
@@ -36,13 +33,11 @@ class JwtSettings:
 
     access_token_lifetime: timedelta = attr.ib(
         default=timedelta(minutes=5),
-        converter=str2timedelta,
-        validator=instance_of(timedelta),
+        converter=to_timedelta,
     )
     refresh_token_lifetime: timedelta = attr.ib(
         default=timedelta(days=1),
-        converter=str2timedelta,
-        validator=instance_of(timedelta),
+        converter=to_timedelta,
     )
 
     auth_token_classes: tuple[str] = ('blacksheep_jwt.tokens.AccessToken',)
