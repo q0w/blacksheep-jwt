@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from datetime import timedelta
 from typing import Any
 from typing import Dict
@@ -106,7 +104,7 @@ class TokenBackend:
             raise TokenBackendError('Token is invalid or expired')
 
     @classmethod
-    def from_configuration(cls, settings: JwtSettings) -> TokenBackend:
+    def from_configuration(cls, settings: JwtSettings) -> 'TokenBackend':
         return cls(
             algorithm=settings.algorithm,
             signing_key=settings.signing_key,
