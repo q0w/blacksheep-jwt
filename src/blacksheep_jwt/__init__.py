@@ -12,9 +12,11 @@ from guardpost.common import AuthenticatedRequirement
 from guardpost.common import Policy
 
 try:
-    import orjson as json
+    import orjson
+    dumps = orjson.dumps
 except ImportError:
-    import json  # type: ignore
+    import json
+    def dumps(obj): return json.dumps(obj).encode('utf-8')  # type: ignore
 
 
 def register_jwt(
@@ -41,6 +43,6 @@ def register_jwt(
                 None,
                 Content(
                     b'application/json',
-                    json.dumps(str(exc)),
+                    dumps(str(exc)),
                 ),
             )
