@@ -1,5 +1,6 @@
 from datetime import timedelta
 from typing import Optional
+from typing import Tuple
 from typing import Union
 
 import attr
@@ -40,4 +41,4 @@ class JwtSettings:
         converter=to_timedelta,
     )
 
-    auth_token_classes: tuple[str] = ('blacksheep_jwt.tokens.AccessToken',)
+    auth_token_classes: Tuple[str] = ('blacksheep_jwt.tokens.AccessToken',)

@@ -4,8 +4,8 @@ from blacksheep.server import Application
 from blacksheep.server.authorization import auth
 from blacksheep.server.bindings import FromJson
 from blacksheep.server.responses import json
-from blacksheep_jwt import JwtSettings
 from blacksheep_jwt import register_jwt
+from blacksheep_jwt.settings import JwtSettings
 from blacksheep_jwt.tokens import RefreshToken
 from configuration.common import ConfigurationBuilder
 from configuration.json import JSONFile
